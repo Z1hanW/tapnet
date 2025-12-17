@@ -49,6 +49,7 @@ Download the raw data into `./data`:
 gdown --folder "https://drive.google.com/drive/folders/1k712Oj9StmWXRzSeSMiHZc3LtvsVk2Rw" -O data
 ```
 
+Caution! Please noted we are expecting either $SEQ_videos or $SEQ_img, when you run code below you should remove _videos / _img. 
 ---
 
 ## 4) Run Full Pipeline (Example)
@@ -57,8 +58,6 @@ If `all_gv.sh` is your main entry script:
 
 ```bash
 sh all_gv.sh $PATH$
-
-e.g. sh all_gv.sh 
 ```
 
 ---

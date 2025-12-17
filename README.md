@@ -1,37 +1,37 @@
 # CRISP-Real2Sim
 
+CRISP-Real2Sim contains the complete pipeline we use to turn in-the-wild video into human-scene reconstructions and downstream controllers. The steps below walk you through cloning the repo, setting up the environment, downloading the required assets, and running the provided scripts.
+
+---
+
+## 1. Repository Setup
+
 ```bash
 git clone --recursive https://github.com/Z1hanW/CRISP-Real2Sim.git
 cd CRISP-Real2Sim
 ```
 
----
+### Create and Activate the Conda Environment
 
-## 1) Setup
-### Create conda environment
 ```bash
-conda create -n cps python=3.10 -y
-conda activate cps
+conda create -n crisp python=3.10 -y
+conda activate crisp
 ```
 
-### Install PyTorch (CUDA 12.4)
+### Install PyTorch (CUDA 12.4 build)
 
 ```bash
 pip install torch==2.4.1 torchvision==0.19.1 torchaudio==2.4.1 "xformers>=0.0.27" \
   --index-url https://download.pytorch.org/whl/cu124
-  
 pip install torch-scatter -f https://data.pyg.org/whl/torch-2.4.1+cu124.html
-
 pip install -r requirements.txt
 ```
 
-#### (if failed to install) Install compiler toolchain
+> If you encounter compilation errors (usually on `pytorch3d` or CUDA extensions), install a compatible compiler toolchain: `conda install -c conda-forge gxx_linux-64=11`.
 
-```bash
-conda install -c conda-forge gxx_linux-64=11
-```
+### Extra Installation Scripts
 
-### Run extra install scripts (prep/)
+Some dependencies (for rendering, viewers, etc.) are wrapped in helper scripts inside `prep/`:
 
 ```bash
 cd prep
@@ -41,48 +41,92 @@ cd ..
 
 ---
 
-## 2) Download Data
+## 2. Download Assets and Data
 
-Download the raw data into `./data`:
+1. **SMPL/SMPL-X body models** (required for rendering and evaluation)
+   - Register at [SMPL](https://smpl.is.tue.mpg.de/) and [SMPL-X](https://smpl-x.is.tue.mpg.de/).
+   - Place the downloaded `.pkl` files using the structure below.
+
+```
+prep/data/
+└── body_models/
+    ├── smpl/SMPL_{GENDER}.pkl
+    └── smplx/SMPLX_{GENDER}.pkl
+```
+
+2. **Demo videos and metadata**
 
 ```bash
+mkdir -p data
 gdown --folder "https://drive.google.com/drive/folders/1k712Oj9StmWXRzSeSMiHZc3LtvsVk2Rw" -O data
 ```
 
-Caution! Please noted we are expecting either $SEQ_videos or $SEQ_img, when you run code below you should remove _videos / _img. 
+> `gdown` is installed via `requirements.txt`. Use the `-O data` flag so Google Drive folders land under `CRISP-Real2Sim/data`.
 
 ---
 
-## 4) Run Full Pipeline (Example)
+## 3. Run the Full Pipeline
 
-If `all_gv.sh` is your main entry script:
+The scripts expect your source sequences to live under either `*_videos` or `*_img` folders. Remove that suffix when you feed paths to the scripts.
 
-```bash
-sh all_gv.sh $PATH$
+```
+data/
+├── demo_videos/
+│   └── walk-kicking/        # example sequence
+└── YOUR_videos/
+    ├── seq_a/
+    └── seq_b/
 ```
 
----
-
-## 5) Visualization Human-Scene Reconstruction
-
 ```bash
-sh vis.sh $SEQ
+sh all_gv.sh /path/to/data/demo        # not /path/to/data/demo_videos
 ```
 
-> If your script supports flags (e.g., `--scene_name`, `--data_root`, `--out_dir`), document them here.
+- The script will iterate through every `*_videos` (or `*_img`) folder under the path you supply.
+- Intermediate data, meshes, and evaluations are written back into the respective sequence directories.
 
 ---
 
-## 6) Train Your Agent
+## 4. Visualize Human–Scene Reconstructions
 
-Code Testing ... 
+```bash
+sh vis.sh ${SEQ_NAME}
+```
 
+Common flags (see script header for the full list):
+- `--scene_name`: override the scene used for rendering.
+- `--data_root`: custom data directory if not `./data`.
+- `--out_dir`: write visualizations to a different folder.
 
 ---
 
-## 7) Visualize Your Agent Directly
+## 5. Train Your Agent
 
-Code Testing ... 
-
+Training utilities are still stabilizing. The current repo contains placeholder scripts under `agents/`:
+- Review `agents/README.md` for the most recent instructions.
+- Ensure the dataset generated in Section 3 is available before launching training.
+- We recommend starting with a small subset (`--subset N`) to validate your setup before scaling.
 
 ---
+
+## 6. Visualize Your Agent
+
+Agent visualization builds on the same `vis.sh` infrastructure:
+
+```bash
+python agents/vis_agent.py \
+  --checkpoint path/to/checkpoint.pt \
+  --seq ${SEQ_NAME} \
+  --out_dir outputs/agent_viz/${SEQ_NAME}
+```
+
+Pass `--scene_name` or `--camera_pose_file` if your controller requires a custom scene or camera path.
+
+---
+
+## 7. Troubleshooting Checklist
+
+- Double-check that your CUDA toolkit matches the PyTorch wheels (CUDA 12.4).
+- If `sh all_gv.sh` fails immediately, confirm the directory you pass does **not** include `_videos`/`_img` in the string.
+- For licensing issues around SMPL/SMPL-X, regenerate the `prep/data/body_models` directory after obtaining the correct files.
+- Reset the conda environment (`conda env remove -n crisp`) and re-run Section 1 when dependencies fall out of sync.

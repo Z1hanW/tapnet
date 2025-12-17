@@ -122,11 +122,3 @@ python agents/vis_agent.py \
 
 Pass `--scene_name` or `--camera_pose_file` if your controller requires a custom scene or camera path.
 
----
-
-## 7. Troubleshooting Checklist
-
-- Double-check that your CUDA toolkit matches the PyTorch wheels (CUDA 12.4).
-- If `sh all_gv.sh` fails immediately, confirm the directory you pass does **not** include `_videos`/`_img` in the string.
-- For licensing issues around SMPL/SMPL-X, regenerate the `prep/data/body_models` directory after obtaining the correct files.
-- Reset the conda environment (`conda env remove -n crisp`) and re-run Section 1 when dependencies fall out of sync.

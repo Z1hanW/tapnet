@@ -1,15 +1,13 @@
 # CRISP-Real2Sim
 
-This repository contains the CRISP Real2Sim pipeline, including dependency setup (`prep/`), main pipeline scripts (`scripts/`), and visualization utilities (`vis_scripts/`).
-
----
-
-## 1) Setup
 ```bash
 git clone --recursive https://github.com/Z1hanW/CRISP-Real2Sim.git
 cd CRISP-Real2Sim
 ```
 
+---
+
+## 1) Setup
 ### Create conda environment
 ```bash
 conda create -n cps python=3.10 -y

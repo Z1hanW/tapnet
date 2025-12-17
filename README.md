@@ -50,6 +50,7 @@ gdown --folder "https://drive.google.com/drive/folders/1k712Oj9StmWXRzSeSMiHZc3L
 ```
 
 Caution! Please noted we are expecting either $SEQ_videos or $SEQ_img, when you run code below you should remove _videos / _img. 
+
 ---
 
 ## 4) Run Full Pipeline (Example)
@@ -65,7 +66,7 @@ sh all_gv.sh $PATH$
 ## 5) Visualization Human-Scene Reconstruction
 
 ```bash
-sh vis.sh <PATH_TO_RESULT>
+sh vis.sh $SEQ
 ```
 
 > If your script supports flags (e.g., `--scene_name`, `--data_root`, `--out_dir`), document them here.

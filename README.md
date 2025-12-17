@@ -21,18 +21,14 @@ pip install torch==2.4.1 torchvision==0.19.1 torchaudio==2.4.1 "xformers>=0.0.27
   --index-url https://download.pytorch.org/whl/cu124
   
 pip install torch-scatter -f https://data.pyg.org/whl/torch-2.4.1+cu124.html
+
+pip install -r requirements.txt
 ```
 
-### (if failed to install) Install compiler toolchain
+#### (if failed to install) Install compiler toolchain
 
 ```bash
 conda install -c conda-forge gxx_linux-64=11
-```
-
-### Install remaining dependencies
-
-```bash
-pip install -r requirements.txt
 ```
 
 ### Run extra install scripts (prep/)
